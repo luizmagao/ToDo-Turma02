@@ -3,61 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vue Init</title>
+    <title>Vue init</title>
     <style>
-        .time {
-            background-color: aqua;
-            padding: 3px;
+        .planoFundo {
+            background-color: blue;
+            color: white;
+        }
+        .tamanhoFonte {
+            font-size: 45px;
         }
     </style>
 </head>
 <body>
+
     <div id="app">
-        <p :class="{ 'time' : cor }">{{ message }}</p>
-        
+        <p :class="{ 'planoFundo' : aux }">{{ message }}</p>
         <input type="text" v-model="message">
-        <button type="button" v-on:click="alterarCor()">Enviar</button>
+        <button type="button" @click="handle()">Enviar</button>
+        <hr>
+        
+        Qual seu sexo?
+        <input type="radio" value="Masculino" v-model="opcaoSexo">Masculino 
+        <input type="radio" value="Feminino" v-model="opcaoSexo">Feminino 
+        <br>
+        {{ opcaoSexo }}
 
-        <p>Qual seu sexo?</p>
-        {{ sexo }}
-        <input type="radio" value="M" v-model="sexo"> Masculino
-        <input type="radio" value="F" v-model="sexo"> Feminino
+        <hr>
 
-        <ul>
-            <li>{{ title }}</li>
-        </ul>
+        <p>Escolha suas refeições!</p>
+        <input type="checkbox" v-model="refeicao" value="Pizza">Pizza <br>
+        <input type="checkbox" v-model="refeicao" value="Hotdog">Hotdog <br>
+        <input type="checkbox" v-model="refeicao" value="Arroz">Arroz <br>
+        <input type="checkbox" v-model="refeicao" value="Sushi">Sushi <br>
+        <input type="checkbox" v-model="refeicao" value="Feijão">Feijão <br>
+        <p>{{ refeicao }}</p>
+        {{ refeicao.length > 2 ? 'Não pode comer mais' : '' }}
 
-        <div v-if="validadeIdadeMenor()">
-            Você menor!
-        </div>
+        <p v-if="pessoaMenor()">A pessoa é menor</p>
+        <p v-else-if="pessoaMaior()">A pessoa é maior</p>
+        <p v-else>A pessoa é idosa</p>
 
-        <div v-else-if="validadeIdadeMaior()">
-            Você é maior!
-        </div>
-
-        <div v-else>
-            Você é idoso! 
-        </div>
-
-        <ul>
-            <li v-for="tarefa in tarefas" :key="tarefa">
-                {{ tarefa }}
-            </li>
-        </ul>
+        <p v-show="variavelValor">Show</p>
 
         <ul>
             <li 
-                v-for="time in times" :key="time.id" 
-                v-bind:class="{ 'time': time.situacao == true }">
-                {{ time.descricao }} com {{ time.estrelas }} estrelas.
+                v-for="time in listaTimes" 
+                :key="time" 
+                v-bind:class="alterarCor()">
+                {{ time.nome }} é da cidade {{ time.cidade }} com {{ time.titulos }} títulos, com {{ time.qntTorcida }} torcedores.
             </li>
         </ul>
-
-        <p>Escolha uma boa refeição!</p>
-        <input type="checkbox" value="Pizza" v-model="comida">Pizza <br/>
-        <input type="checkbox" value="Lasanha" v-model="comida">Lasanha <br/>
-        <input type="checkbox" value="Frutas" v-model="comida">Frutas <br/>
-        {{ comida }}
     </div>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -67,71 +62,69 @@
         createApp({
             setup() {
                 const message = ref('Here!')
-                const title = ref('Iniciando aprendizado com VUE')
-                const visivel = ref(false)
-                const idade = ref(17)
-                const tarefas = ref([
-                    "Tarefa 01",
-                    "Tarefa 02",
-                    "Tarefa 03",
-                    "Tarefa 04",
-                    "Tarefa 05",
-                ])
-                const times = ref([
+                const variavelValor = ref(false)
+
+                const idade = 78
+                const pessoaMenor = () => idade < 18
+                const pessoaMaior = () => (idade >= 18 && idade < 50)
+
+                const alterarCor = () => {
+                    return ['tamanhoFonte', 'planoFundo'];
+                }
+
+                const listaTimes = ref([
                     {
-                        id: 1,
-                        descricao: "Parnahyba Sport Club",
-                        estrelas: 5,
-                        situacao: true
+                        nome: 'Parnahyba Sport Club',
+                        cidade: 'Parnaíba',
+                        titulos: 2,
+                        qntTorcida: 890
                     },
                     {
-                        id: 2,
-                        descricao: "4 de julho",
-                        estrelas: 3,
-                        situacao: false
+                        nome: '4 de julho',
+                        cidade: 'Piripiri',
+                        titulos: 1,
+                        qntTorcida: 1000
                     },
                     {
-                        id: 3,
-                        descricao: "Altos Esporte Clube",
-                        estrelas: 1,
-                        situacao: false
+                        nome: 'Ferroviário',
+                        cidade: 'Parnaíba',
+                        titulos: 0,
+                        qntTorcida: 780
+                    },
+                    {
+                        nome: 'River',
+                        cidade: 'Teresina',
+                        titulos: 7,
+                        qntTorcida: 340
+                    },
+                    {
+                        nome: 'Altos Esporte Clube',
+                        cidade: 'Altos',
+                        titulos: 3,
+                        qntTorcida: 0
                     }
                 ])
 
-                const classVar = () => {
-                    return { 'time': true }
-                }
+                const opcaoSexo = ref('Feminino')
 
-                const validadeIdadeMenor = () => {
-                    return idade.value < 18
-                }
+                const refeicao = ref([])
 
-                const validadeIdadeMaior = () => {
-                    return idade.value >= 18 && idade.value <= 50
-                }
-
-                const sexo = ref('M')
-
-                const comida = ref([])
-                const cor = ref(true);
-                const alterarCor = () => {
-                    cor.value = !cor.value
+                const aux = ref(false)
+                const handle = () => {
+                    aux.value = !aux.value
                 }
 
                 return {
-                    cor,
+                    aux,
+                    handle,
+                    refeicao,
+                    opcaoSexo,
                     alterarCor,
-                    comida,
-                    sexo,
+                    pessoaMenor,
+                    pessoaMaior,
                     message,
-                    title,
-                    visivel,
-                    idade,
-                    validadeIdadeMenor,
-                    validadeIdadeMaior,
-                    tarefas,
-                    times,
-                    classVar
+                    variavelValor,
+                    listaTimes
                 }
             }
         }).mount('#app')
