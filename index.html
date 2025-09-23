@@ -13,125 +13,38 @@
 </head>
 <body>
     <div id="app">
-        <p :class="{ 'time' : cor }">{{ message }}</p>
-        
-        <input type="text" v-model="message">
-        <button type="button" v-on:click="alterarCor()">Enviar</button>
-
-        <p>Qual seu sexo?</p>
-        {{ sexo }}
-        <input type="radio" value="M" v-model="sexo"> Masculino
-        <input type="radio" value="F" v-model="sexo"> Feminino
-
-        <ul>
-            <li>{{ title }}</li>
-        </ul>
-
-        <div v-if="validadeIdadeMenor()">
-            Você menor!
-        </div>
-
-        <div v-else-if="validadeIdadeMaior()">
-            Você é maior!
-        </div>
-
-        <div v-else>
-            Você é idoso! 
-        </div>
-
-        <ul>
-            <li v-for="tarefa in tarefas" :key="tarefa">
-                {{ tarefa }}
-            </li>
-        </ul>
-
-        <ul>
-            <li 
-                v-for="time in times" :key="time.id" 
-                v-bind:class="{ 'time': time.situacao == true }">
-                {{ time.descricao }} com {{ time.estrelas }} estrelas.
-            </li>
-        </ul>
-
-        <p>Escolha uma boa refeição!</p>
-        <input type="checkbox" value="Pizza" v-model="comida">Pizza <br/>
-        <input type="checkbox" value="Lasanha" v-model="comida">Lasanha <br/>
-        <input type="checkbox" value="Frutas" v-model="comida">Frutas <br/>
-        {{ comida }}
+        <user-profile>Admin</user-profile>
+        <user-profile>
+            <template v-slot="contexto">Esse texto vai dentro do slot contexto</template>
+        </user-profile>
+        <user-profile v-slot="contexto">teste</user-profile>
+        <user-profile></user-profile>
+        <user-profile></user-profile>
+        <user-profile></user-profile>
     </div>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
-        const { createApp, ref } = Vue
+        const { createApp, ref, defineComponent } = Vue
+
+        const UserProfile = defineComponent({
+            name: 'UserProfile',
+            setup() {
+                const username = ref('Usuario 01')
+                return {
+                    username
+                }
+            },
+            template: `{{ username }} <slot/> <div><slot name='contexto'/></div> <br/>`
+        })
 
         createApp({
+            components: {
+                UserProfile
+            },
             setup() {
-                const message = ref('Here!')
-                const title = ref('Iniciando aprendizado com VUE')
-                const visivel = ref(false)
-                const idade = ref(17)
-                const tarefas = ref([
-                    "Tarefa 01",
-                    "Tarefa 02",
-                    "Tarefa 03",
-                    "Tarefa 04",
-                    "Tarefa 05",
-                ])
-                const times = ref([
-                    {
-                        id: 1,
-                        descricao: "Parnahyba Sport Club",
-                        estrelas: 5,
-                        situacao: true
-                    },
-                    {
-                        id: 2,
-                        descricao: "4 de julho",
-                        estrelas: 3,
-                        situacao: false
-                    },
-                    {
-                        id: 3,
-                        descricao: "Altos Esporte Clube",
-                        estrelas: 1,
-                        situacao: false
-                    }
-                ])
-
-                const classVar = () => {
-                    return { 'time': true }
-                }
-
-                const validadeIdadeMenor = () => {
-                    return idade.value < 18
-                }
-
-                const validadeIdadeMaior = () => {
-                    return idade.value >= 18 && idade.value <= 50
-                }
-
-                const sexo = ref('M')
-
-                const comida = ref([])
-                const cor = ref(true);
-                const alterarCor = () => {
-                    cor.value = !cor.value
-                }
 
                 return {
-                    cor,
-                    alterarCor,
-                    comida,
-                    sexo,
-                    message,
-                    title,
-                    visivel,
-                    idade,
-                    validadeIdadeMenor,
-                    validadeIdadeMaior,
-                    tarefas,
-                    times,
-                    classVar
                 }
             }
         }).mount('#app')
