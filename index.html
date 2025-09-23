@@ -13,125 +13,82 @@
 </head>
 <body>
     <div id="app">
-        <p :class="{ 'time' : cor }">{{ message }}</p>
         
-        <input type="text" v-model="message">
-        <button type="button" v-on:click="alterarCor()">Enviar</button>
+        <p>Primeiro nome: {{ user.first_name }}</p>
+        <p>Último nome: {{ user.last_name }}</p>
+        <p>Nome completo: {{ full_name }}</p>
 
-        <p>Qual seu sexo?</p>
-        {{ sexo }}
-        <input type="radio" value="M" v-model="sexo"> Masculino
-        <input type="radio" value="F" v-model="sexo"> Feminino
+        <hr>
 
         <ul>
-            <li>{{ title }}</li>
-        </ul>
-
-        <div v-if="validadeIdadeMenor()">
-            Você menor!
-        </div>
-
-        <div v-else-if="validadeIdadeMaior()">
-            Você é maior!
-        </div>
-
-        <div v-else>
-            Você é idoso! 
-        </div>
-
-        <ul>
-            <li v-for="tarefa in tarefas" :key="tarefa">
-                {{ tarefa }}
+            <li v-for="todo in todos" :key="todo.task">
+                <input v-model="todo.status" type="checkbox">
+                {{ todo.task }}
             </li>
         </ul>
 
         <ul>
-            <li 
-                v-for="time in times" :key="time.id" 
-                v-bind:class="{ 'time': time.situacao == true }">
-                {{ time.descricao }} com {{ time.estrelas }} estrelas.
+            <li v-for="todo in unTodos" :key="todo.task">
+                {{ todo.task }} - {{ todo.status }}
             </li>
         </ul>
 
-        <p>Escolha uma boa refeição!</p>
-        <input type="checkbox" value="Pizza" v-model="comida">Pizza <br/>
-        <input type="checkbox" value="Lasanha" v-model="comida">Lasanha <br/>
-        <input type="checkbox" value="Frutas" v-model="comida">Frutas <br/>
-        {{ comida }}
+        <ul>
+            <li v-for="todo in completeTodos" :key="todo.task">
+                {{ todo.task }} - {{ todo.status }}
+            </li>
+        </ul>
+        
     </div>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
-        const { createApp, ref } = Vue
+        const { createApp, ref, computed } = Vue
 
         createApp({
             setup() {
-                const message = ref('Here!')
-                const title = ref('Iniciando aprendizado com VUE')
-                const visivel = ref(false)
-                const idade = ref(17)
-                const tarefas = ref([
-                    "Tarefa 01",
-                    "Tarefa 02",
-                    "Tarefa 03",
-                    "Tarefa 04",
-                    "Tarefa 05",
-                ])
-                const times = ref([
+                const user = ref({
+                    first_name: "Luiz",
+                    last_name: "Monteiro"
+                })
+
+                const full_name = computed(() => {
+                    return `${user.value.first_name} ${user.value.last_name}`
+                })
+
+                const todos = ref([
                     {
-                        id: 1,
-                        descricao: "Parnahyba Sport Club",
-                        estrelas: 5,
-                        situacao: true
+                        task: 'Here 01',
+                        status: false
                     },
                     {
-                        id: 2,
-                        descricao: "4 de julho",
-                        estrelas: 3,
-                        situacao: false
+                        task: 'Here 02',
+                        status: true
                     },
                     {
-                        id: 3,
-                        descricao: "Altos Esporte Clube",
-                        estrelas: 1,
-                        situacao: false
-                    }
+                        task: 'Here 03',
+                        status: true
+                    },
+                    {
+                        task: 'Here 04',
+                        status: true
+                    },
                 ])
-
-                const classVar = () => {
-                    return { 'time': true }
-                }
-
-                const validadeIdadeMenor = () => {
-                    return idade.value < 18
-                }
-
-                const validadeIdadeMaior = () => {
-                    return idade.value >= 18 && idade.value <= 50
-                }
-
-                const sexo = ref('M')
-
-                const comida = ref([])
-                const cor = ref(true);
-                const alterarCor = () => {
-                    cor.value = !cor.value
-                }
+                
+                const unTodos = computed(() => {
+                    return (todos.value).filter((todo) => todo.status)
+                })
+                
+                const completeTodos = computed(() => {
+                    return (todos.value).filter((todo) => !todo.status)
+                })
 
                 return {
-                    cor,
-                    alterarCor,
-                    comida,
-                    sexo,
-                    message,
-                    title,
-                    visivel,
-                    idade,
-                    validadeIdadeMenor,
-                    validadeIdadeMaior,
-                    tarefas,
-                    times,
-                    classVar
+                    todos,
+                    unTodos,
+                    completeTodos,
+                    user,
+                    full_name
                 }
             }
         }).mount('#app')
