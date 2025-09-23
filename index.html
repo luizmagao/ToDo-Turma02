@@ -3,135 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vue Init</title>
-    <style>
-        .time {
-            background-color: aqua;
-            padding: 3px;
-        }
-    </style>
+    <title>Vue</title>
 </head>
 <body>
     <div id="app">
-        <p :class="{ 'time' : cor }">{{ message }}</p>
-        
-        <input type="text" v-model="message">
-        <button type="button" v-on:click="alterarCor()">Enviar</button>
-
-        <p>Qual seu sexo?</p>
-        {{ sexo }}
-        <input type="radio" value="M" v-model="sexo"> Masculino
-        <input type="radio" value="F" v-model="sexo"> Feminino
-
+        ToDos 
+        <hr>
+        <input type="text" v-model="contexto">
+        <button type="button" @click="addTask">Add Task</button>
         <ul>
-            <li>{{ title }}</li>
-        </ul>
-
-        <div v-if="validadeIdadeMenor()">
-            Você menor!
-        </div>
-
-        <div v-else-if="validadeIdadeMaior()">
-            Você é maior!
-        </div>
-
-        <div v-else>
-            Você é idoso! 
-        </div>
-
-        <ul>
-            <li v-for="tarefa in tarefas" :key="tarefa">
-                {{ tarefa }}
+            <li v-for="todo in todos">
+                <input type="checkbox" v-model="todo.completed">
+                {{ todo.task}}
             </li>
         </ul>
-
+        ToDos Completed
         <ul>
-            <li 
-                v-for="time in times" :key="time.id" 
-                v-bind:class="{ 'time': time.situacao == true }">
-                {{ time.descricao }} com {{ time.estrelas }} estrelas.
+            <li v-for="todo in todosCompleted">
+                {{ todo.task}}
             </li>
         </ul>
-
-        <p>Escolha uma boa refeição!</p>
-        <input type="checkbox" value="Pizza" v-model="comida">Pizza <br/>
-        <input type="checkbox" value="Lasanha" v-model="comida">Lasanha <br/>
-        <input type="checkbox" value="Frutas" v-model="comida">Frutas <br/>
-        {{ comida }}
+        ToDos unCompleted
+        <ul>
+            <li v-for="todo in todosUnCompleted">
+                {{ !todo.completed ? todo.task : '' }}
+            </li>
+            <div v-if="todosUnCompleted.length == 0">Todas as tarefas foram completadas</div>
+        </ul>
     </div>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
-        const { createApp, ref } = Vue
+        const { createApp, ref, computed } = Vue
 
         createApp({
             setup() {
-                const message = ref('Here!')
-                const title = ref('Iniciando aprendizado com VUE')
-                const visivel = ref(false)
-                const idade = ref(17)
-                const tarefas = ref([
-                    "Tarefa 01",
-                    "Tarefa 02",
-                    "Tarefa 03",
-                    "Tarefa 04",
-                    "Tarefa 05",
-                ])
-                const times = ref([
-                    {
-                        id: 1,
-                        descricao: "Parnahyba Sport Club",
-                        estrelas: 5,
-                        situacao: true
-                    },
-                    {
-                        id: 2,
-                        descricao: "4 de julho",
-                        estrelas: 3,
-                        situacao: false
-                    },
-                    {
-                        id: 3,
-                        descricao: "Altos Esporte Clube",
-                        estrelas: 1,
-                        situacao: false
-                    }
+
+                const todos = ref([
+                    { task: 'tarefa 01', completed: false },
+                    { task: 'tarefa 02', completed: true },
+                    { task: 'tarefa 03', completed: true },
+                    { task: 'tarefa 04', completed: true },
+                    { task: 'tarefa 05', completed: false },
                 ])
 
-                const classVar = () => {
-                    return { 'time': true }
+                const todosCompleted = computed(() => {
+                    return (todos.value).filter(task => task.completed )
+                })
+                
+                const todosUnCompleted = computed(() => {
+                    return (todos.value).filter(task => !task.completed )
+                })
+
+                const addTask = () => {
+                    const task = { task: contexto.value, completed: false }
+                    todos.value.push(task)
                 }
 
-                const validadeIdadeMenor = () => {
-                    return idade.value < 18
-                }
-
-                const validadeIdadeMaior = () => {
-                    return idade.value >= 18 && idade.value <= 50
-                }
-
-                const sexo = ref('M')
-
-                const comida = ref([])
-                const cor = ref(true);
-                const alterarCor = () => {
-                    cor.value = !cor.value
-                }
+                const contexto = ref('')
 
                 return {
-                    cor,
-                    alterarCor,
-                    comida,
-                    sexo,
-                    message,
-                    title,
-                    visivel,
-                    idade,
-                    validadeIdadeMenor,
-                    validadeIdadeMaior,
-                    tarefas,
-                    times,
-                    classVar
+                    contexto,
+                    addTask,
+                    todos,
+                    todosCompleted,
+                    todosUnCompleted,
                 }
             }
         }).mount('#app')
