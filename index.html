@@ -10,6 +10,7 @@
         ToDos 
         <hr>
         <input type="text" v-model="contexto">
+        <input type="checkbox" v-model="opcao">
         <button type="button" @click="addTask">Add Task</button>
         <ul>
             <li v-for="todo in todos">
@@ -30,6 +31,11 @@
             </li>
             <div v-if="todosUnCompleted.length == 0">Todas as tarefas foram completadas</div>
         </ul>
+
+        <input type="text" v-model="first_name">
+
+        {{ full_name }}
+
     </div>
 
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -56,13 +62,23 @@
                 })
 
                 const addTask = () => {
-                    const task = { task: contexto.value, completed: false }
+                    const task = { task: contexto.value, completed: opcao.value }
                     todos.value.push(task)
                 }
 
+                const full_name = computed(() => {
+                    return `${first_name.value} ${last_name.value}`
+                })
+
                 const contexto = ref('')
+                const opcao = ref(false)
+                const first_name = ref('Luiz')
+                const last_name = ref('Monteiro')
 
                 return {
+                    first_name,
+                    full_name,
+                    opcao,
                     contexto,
                     addTask,
                     todos,
