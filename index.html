@@ -15,6 +15,19 @@
         Lista To Do
         <ul>
             <li v-for="todo in todos" :key="todo.task">
+                <input type="checkbox" v-model="todo.completed">
+                {{ todo.task }}
+            </li>
+        </ul>
+        Lista To Do (completed)
+        <ul>
+            <li v-for="todo in completed" :key="todo.task">
+                {{ todo.task }}
+            </li>
+        </ul>
+        Lista To Do (unCompleted)
+        <ul>
+            <li v-for="todo in unCompleted" :key="todo.task">
                 {{ todo.task }}
             </li>
         </ul>
@@ -33,15 +46,25 @@
                     return `${first_name.value} ${last_name.value}`
                 })
 
-                const todos = [
+                const todos = ref([
                     { task: 'tarefa 01', completed: true },
                     { task: 'tarefa 02', completed: true },
-                    { task: 'tarefa 03', completed: true },
+                    { task: 'tarefa 03', completed: false },
                     { task: 'tarefa 04', completed: true },
                     { task: 'tarefa 05', completed: true },
-                ]
+                ])
+
+                const unCompleted = computed(() => {
+                    return (todos.value).filter((task) => !task.completed)
+                })
+
+                const completed = computed(() => {
+                    return (todos.value).filter((task) => task.completed)
+                })
 
                 return {
+                    completed,
+                    unCompleted,
                     todos,
                     first_name,
                     last_name,
