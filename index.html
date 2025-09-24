@@ -7,10 +7,10 @@
 </head>
 <body>
     <div id="app">
-        <p>{{ first_name }}</p>
-        <p>{{ last_name }}</p>
-        <p>{{ full_name }}</p>
-        <input type="text" v-model="first_name">
+        <h1>Todos</h1>
+        <input type="text" v-model="task">
+        <input type="checkbox" v-model="option">
+        <button type="button" @click="addTask">Add task</button>
         <hr>
         Lista To Do
         <ul>
@@ -62,7 +62,17 @@
                     return (todos.value).filter((task) => task.completed)
                 })
 
+                const task = ref('')
+                const option = ref('')
+
+                const addTask = () => {
+                    (todos.value).push({task: task.value, completed: option.value})
+                }
+
                 return {
+                    option,
+                    addTask,
+                    task,
                     completed,
                     unCompleted,
                     todos,
